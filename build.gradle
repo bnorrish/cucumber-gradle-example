@@ -1,0 +1,34 @@
+apply plugin: 'java'
+
+version = '1.0'
+
+defaultTasks 'clean', 'build', 'testFeature'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'info.cukes', name: 'cucumber-junit', version: '1.+'
+    compile group: 'info.cukes', name: 'cucumber-java', version: '1.+'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testCompile
+    }
+}
+
+task testFeatures(type: JavaExec) {
+    dependsOn testClasses
+    systemProperties System.getProperties()
+
+    main = "cucumber.api.cli.Main"
+    classpath = configurations.cucumberRuntime + sourceSets.main.output
+
+    args = ['--plugin', 'pretty',
+            '--glue', 'com.bnorrish.sample', 'src/main/resources/features'
+    ]
+
+
+}
